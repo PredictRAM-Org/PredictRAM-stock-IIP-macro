@@ -3,9 +3,8 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 # Load stock data
 stock_data = pd.read_json("stock.json")
@@ -15,6 +14,11 @@ macro_data = pd.read_excel("macro_data.xlsx")
 
 # Load IIP data
 iip_data = pd.read_csv("IIP.csv")
+
+# Ensure 'Date' column is in datetime format for proper merging
+stock_data['Date'] = pd.to_datetime(stock_data['Date'])
+macro_data['Reporting Date'] = pd.to_datetime(macro_data['Reporting Date'])
+iip_data['Date'] = pd.to_datetime(iip_data['Date'])
 
 # Combine data based on common date columns
 combined_data = pd.merge(stock_data, macro_data, how="inner", left_on="Date", right_on="Reporting Date")
