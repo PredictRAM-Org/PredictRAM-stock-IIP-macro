@@ -15,14 +15,21 @@ macro_data = pd.read_excel("macro_data.xlsx")
 # Load IIP data
 iip_data = pd.read_csv("IIP.csv")
 
+# Error handling for converting 'Date' column to datetime format
+try:
+    stock_data['Date'] = pd.to_datetime(stock_data['Date'], errors='raise')
+except ValueError:
+    st.error("Error: Unable to convert 'Date' column to datetime format in stock_data.")
+    st.stop()
+
 # Ensure 'Date' column is in datetime format for proper merging
-stock_data['Date'] = pd.to_datetime(stock_data['Date'])
 macro_data['Reporting Date'] = pd.to_datetime(macro_data['Reporting Date'])
 iip_data['Date'] = pd.to_datetime(iip_data['Date'])
 
 # Combine data based on common date columns
 combined_data = pd.merge(stock_data, macro_data, how="inner", left_on="Date", right_on="Reporting Date")
 combined_data = pd.merge(combined_data, iip_data, how="inner", on="Date")
+
 
 # User interface
 st.title("Stock Analysis App")
